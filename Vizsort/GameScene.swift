@@ -27,15 +27,22 @@ class GameScene: SKScene {
         // Get label node from scene and store it for use later
 
 //        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-//
-//        if let label = self.label {
-//            label.alpha = 0.0
-//            label.run(SKAction.fadeIn(withDuration: 2.0))
-//        }
+        let labelNode = SKLabelNode(text: "New Sample Insertion Sort")
+        labelNode.position = CGPoint(x: 0, y: self.size.height * 0.4)
+        labelNode.name = "helloNode"
+        labelNode.fontSize = CGFloat(30.0)
+        labelNode.fontName = "Avenir Next Heavy"
+        self.label = labelNode
+
+        if let label = self.label {
+            label.run(SKAction.fadeIn(withDuration: 0.5))
+//            label.name = "helloNode"
+            self.addChild(label)
+        }
                 
         
-        barWidth = Int(0.75 * (self.size.width / CGFloat( maxNumber)))
-        barHeight = Int(0.75 * (self.size.height))
+        barWidth = Int(0.8 * (self.size.width / CGFloat( maxNumber)))
+        barHeight = Int(0.7 * (self.size.height))
         sample = [Int](1...maxNumber).shuffled()
         
         insertionSort()
@@ -62,56 +69,33 @@ class GameScene: SKScene {
         return shape
     }
     
-    
-    func touchDown(atPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.green
-//            self.addChild(n)
-//        }
+    func drawBars(toPoint pos : CGPoint) {
+        if let m = self.label?.copy() as! SKLabelNode? {
+            m.position = CGPoint(x: 0, y: self.size.height * 0.4)
+            m.name = "helloNode"
+            self.addChild(m)
+        }
         
-//        if let m = self.block?.copy() as! SKSpriteNode? {
-//            m.position = pos
-//            self.addChild(m)
-//        }
-//        self.removeAllChildren()
-//        if let m = self.bars?.copy() as! SKShapeNode? {
-//            m.position = pos
-//            m.position = CGPoint(x: -((0.5-0.125) * self.size.width), y: -(0.4 * self.size.height))
-//            m.strokeColor = SKColor.green
-//            self.addChild(m)
-//        }
-        
-//
-//        if curr < omega.count {
-//            sampleToAdd = omega[curr]
-//            curr += 1
-//        }
-//        else {
-//            curr = 0
-//        }
-//
-        self.removeAllChildren()
+        let touchedNode = atPoint(pos)
+        if touchedNode.name == "helloNode" {
+            insertionSort()
+        }
         
         if curr < omega.count {
             sampleToAdd = omega[curr]
             curr += 1
         }
         else {
-            insertionSort()
             curr = 0
         }
         let m = generateBarPoints(heights: sampleToAdd, width: barWidth, mxHt: barHeight)
-//            m.position = pos
-            m.position = CGPoint(x: -((0.5-0.125) * self.size.width), y: -(0.4 * self.size.height))
-            m.strokeColor = SKColor.systemYellow
-            m.lineWidth = 10.5
-            m.name = "m"
-            self.addChild(m)
-//        let new = self.childNode(withName: "m")
-//        new?.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-//                                    SKAction.fadeOut(withDuration: 0.5),
-//                                    SKAction.removeFromParent()]))
+        //            m.position = pos
+        m.position = CGPoint(x: -((0.5-0.1) * self.size.width), y: -(0.4 * self.size.height))
+        m.strokeColor = SKColor.systemOrange
+        m.lineWidth = 2.5
+        m.fillColor = UIColor.blue
+        self.addChild(m)
+        
     }
     
     func swap(a: Int, b: Int) {
@@ -123,9 +107,6 @@ class GameScene: SKScene {
         
 
         omega.append(sample.reversed())
-//        usleep(1000000)
-                
-        
     }
     
     func insertionSort() {
@@ -136,6 +117,7 @@ class GameScene: SKScene {
         omega = []
         sample.shuffle()
         omega.append(sample.reversed())
+        curr = 0
         
         // bounds check
         for i in 1...maxNum {
@@ -151,28 +133,32 @@ class GameScene: SKScene {
     }
     
     
-    func touchMoved(toPoint pos : CGPoint) {
-//        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-//            n.position = pos
-//            n.strokeColor = SKColor.blue
-//            self.addChild(n)
-//        }
+    
+    
+    
+    // Touch handling
+    //
+    //
+    
+    func touchDown(atPoint pos : CGPoint) {
+        //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+        //            n.position = pos
+        //            n.strokeColor = SKColor.green
+        //            self.addChild(n)
+        //        }
         self.removeAllChildren()
-        
-        if curr < omega.count {
-            sampleToAdd = omega[curr]
-            curr += 1
-        }
-        else {
-            curr = 0
-        }
-        let m = generateBarPoints(heights: sampleToAdd, width: barWidth, mxHt: barHeight)
-//            m.position = pos
-            m.position = CGPoint(x: -((0.5-0.125) * self.size.width), y: -(0.4 * self.size.height))
-            m.strokeColor = SKColor.systemYellow
-            m.lineWidth = 10.5
-            self.addChild(m)
-        
+        drawBars(toPoint: pos)
+
+    }
+    
+    func touchMoved(toPoint pos : CGPoint) {
+        //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
+        //            n.position = pos
+        //            n.strokeColor = SKColor.blue
+        //            self.addChild(n)
+        //        }
+        self.removeAllChildren()
+        drawBars(toPoint: pos)
     }
     
     func touchUp(atPoint pos : CGPoint) {
@@ -185,10 +171,10 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
-           
-        }
+//        if let label = self.label {
+//            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+//
+//        }
         
         
         
