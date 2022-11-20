@@ -8,9 +8,13 @@
 import SpriteKit
 import GameplayKit
 
+
+// TODO: landscape mode
+
 class GameScene: SKScene {
     
     private var label : SKLabelNode?
+    private var complexityLabel : SKLabelNode?
     private var tenLabel : SKLabelNode?
     private var twentyFiveLabel : SKLabelNode?
     private var fiftyLabel : SKLabelNode?
@@ -32,10 +36,11 @@ class GameScene: SKScene {
         // Get label node from scene and store it for use later
 
 //        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        let labelNode = SKLabelNode(text: "Shuffle")
+        let labelNode = SKLabelNode(text: "Insertion Sort")
         labelNode.position = CGPoint(x: 0, y: self.size.height * 0.4)
-        labelNode.name = "helloNode"
-        labelNode.fontSize = CGFloat(30.0)
+        labelNode.name = "sortLabel"
+        labelNode.fontSize = CGFloat(35.0)
+        labelNode.fontColor = UIColor.black
         labelNode.fontName = "Avenir Next Heavy"
         
         var background = SKSpriteNode(color: UIColor.blue, size: CGSize(width: CGFloat(self.size.width), height:CGFloat(self.size.height)))
@@ -51,10 +56,26 @@ class GameScene: SKScene {
             self.addChild(label)
         }
         
+        let complexityNode = SKLabelNode(text: "Complexity: O(n^2) time, O(1) space, (n^2)/4 avg.")
+        complexityNode.position = CGPoint(x: 0, y: self.size.height * 0.375)
+        complexityNode.name = "sortLabel"
+        complexityNode.fontSize = CGFloat(25.0)
+        complexityNode.fontColor = UIColor.black
+        complexityNode.fontName = "Helvetica"
+        
+        self.complexityLabel = complexityNode
+
+        if let complexityLabel = self.complexityLabel {
+            complexityLabel.run(SKAction.fadeIn(withDuration: 0.5))
+//            label.name = "helloNode"
+            self.addChild(complexityLabel)
+        }
+        
         let tenNode = SKLabelNode(text: "10")
-        tenNode.position = CGPoint(x: -self.size.width * 0.325, y: self.size.height * 0.35)
+        tenNode.position = CGPoint(x: -self.size.width * 0.325, y: self.size.height * 0.335)
         tenNode.name = "tenNode"
         tenNode.fontSize = CGFloat(30.0)
+        tenNode.fontColor = UIColor.systemOrange
         tenNode.fontName = "Avenir Next Heavy"
         self.tenLabel = tenNode
         if let tenLabel = self.tenLabel {
@@ -64,10 +85,11 @@ class GameScene: SKScene {
         }
         
         let twentyFiveNode = SKLabelNode(text: "25")
-        twentyFiveNode.position = CGPoint(x: -self.size.width * 0.125, y: self.size.height * 0.35)
+        twentyFiveNode.position = CGPoint(x: -self.size.width * 0.125, y: self.size.height * 0.335)
         twentyFiveNode.name = "twentyFiveNode"
         twentyFiveNode.fontSize = CGFloat(30.0)
         twentyFiveNode.fontName = "Avenir Next Heavy"
+        twentyFiveNode.fontColor = UIColor.systemOrange
         self.twentyFiveLabel = twentyFiveNode
         if let twentyFiveLabel = self.twentyFiveLabel {
             twentyFiveLabel.run(SKAction.fadeIn(withDuration: 0.5))
@@ -78,9 +100,10 @@ class GameScene: SKScene {
         
         
         let fiftyNode = SKLabelNode(text: "50")
-        fiftyNode.position = CGPoint(x: self.size.width * 0.125, y: self.size.height * 0.35)
+        fiftyNode.position = CGPoint(x: self.size.width * 0.125, y: self.size.height * 0.335)
         fiftyNode.name = "fiftyNode"
         fiftyNode.fontSize = CGFloat(30.0)
+        fiftyNode.fontColor = UIColor.systemOrange
         fiftyNode.fontName = "Avenir Next Heavy"
         self.fiftyLabel = fiftyNode
         if let fiftyLabel = self.fiftyLabel {
@@ -90,9 +113,10 @@ class GameScene: SKScene {
         }
         
         let hundredNode = SKLabelNode(text: "100")
-        hundredNode.position = CGPoint(x: self.size.width * 0.325, y: self.size.height * 0.35)
+        hundredNode.position = CGPoint(x: self.size.width * 0.325, y: self.size.height * 0.335)
         hundredNode.name = "hundredNode"
         hundredNode.fontSize = CGFloat(30.0)
+        hundredNode.fontColor = UIColor.systemOrange
         hundredNode.fontName = "Avenir Next Heavy"
         self.hundredLabel = hundredNode
         if let hundredLabel = self.hundredLabel {
@@ -105,15 +129,18 @@ class GameScene: SKScene {
         insertionSort()
         
         let swapsNode = SKLabelNode(text: "Swaps:")
-        swapsNode.position = CGPoint(x: -((0.5-0.1) * self.size.width) * 0, y: -(0.425 * self.size.height))
+        swapsNode.position = CGPoint(x: -((0.5) * self.size.width) * 0, y: -(0.425 * self.size.height))
         swapsNode.name = "swapsNode"
         swapsNode.fontSize = CGFloat(30.0)
+        swapsNode.fontColor = UIColor.systemOrange
         swapsNode.fontName = "Avenir Next Heavy"
         self.swapsLabel = swapsNode
         if let swapsLabel = self.swapsLabel {
             swapsLabel.run(SKAction.fadeIn(withDuration: 0.5))
             self.addChild(swapsLabel)
         }
+        
+        self.backgroundColor = UIColor.black
    
     }
     
@@ -138,6 +165,10 @@ class GameScene: SKScene {
     }
     
     func drawButtons(toPoint pos : CGPoint) {
+        if let i = self.complexityLabel?.copy() as! SKLabelNode? {
+            self.addChild(i)
+        }
+        
         if let j = self.label?.copy() as! SKLabelNode? {
             self.addChild(j)
         }
@@ -158,24 +189,31 @@ class GameScene: SKScene {
             self.addChild(n)
         }
         
+        
+    }
+    
+    func drawBars(pt: CGPoint) {
+        
+        if pt.x >= 0.0 && pt.y < (self.size.height * 0.3){
+            curr += 1
+            if curr >= omega.count {
+                curr = omega.count - 1
+            }
+            sampleToAdd = omega[curr]
+        } else {
+            curr -= 1
+            if curr < 0 {
+                curr = 0
+            }
+            sampleToAdd = omega[curr]
+        }
+        
         if let s = self.swapsLabel?.copy() as! SKLabelNode? {
             s.text = "swaps: \(curr)"
             s.position = CGPoint(x: -((0.5-0.1) * self.size.width) * 0, y: -(0.425 * self.size.height))
             self.addChild(s)
         }
         
-        
-    }
-    
-    func drawBars() {
-        
-        if curr < omega.count {
-            sampleToAdd = omega[curr]
-            curr += 1
-        }
-        else {
-            curr = 0
-        }
         let n = generateBarPoints(heights: sampleToAdd, width: barWidth, mxHt: barHeight)
         //            m.position = pos
         n.position = CGPoint(x: -((0.5-0.1) * self.size.width), y: -(0.4 * self.size.height))
@@ -184,7 +222,6 @@ class GameScene: SKScene {
         n.fillColor = UIColor.blue
         
         self.addChild(n)
-        
     }
     
     func swap(a: Int, b: Int) {
@@ -229,8 +266,12 @@ class GameScene: SKScene {
     
     // Touch handling
     //
-    //
-    
+    func redrawBars(atPoint pos : CGPoint) {
+        self.removeAllChildren()
+        drawButtons(toPoint: pos)
+        drawBars(pt: pos)
+        
+    }
     func touchDown(atPoint pos : CGPoint) {
         //        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
         //            n.position = pos
@@ -240,26 +281,34 @@ class GameScene: SKScene {
         
         let touchedNode = atPoint(pos)
         
-        if touchedNode.name == "helloNode" {
-            insertionSort()
-            curr = 0
-        } else if touchedNode.name == "tenNode" {
+        if touchedNode.name == "tenNode" {
+            
             self.maxNumber = 10
             insertionSort()
+            redrawBars(atPoint: pos)
+            
         } else if touchedNode.name == "twentyFiveNode" {
+            
             self.maxNumber = 25
             insertionSort()
+            redrawBars(atPoint: pos)
         } else if touchedNode.name == "fiftyNode" {
+            
             self.maxNumber = 50
             insertionSort()
+            redrawBars(atPoint: pos)
+            
         } else if touchedNode.name == "hundredNode" {
+            
             self.maxNumber = 100
             insertionSort()
+            redrawBars(atPoint: pos)
+            
         }
         
-        self.removeAllChildren()
-        drawButtons(toPoint: pos)
-        drawBars()
+        if pos.y < (self.size.height * 0.3) {
+            redrawBars(atPoint: pos)
+        }
     }
     
     func touchMoved(toPoint pos : CGPoint) {
@@ -268,11 +317,8 @@ class GameScene: SKScene {
         //            n.strokeColor = SKColor.blue
         //            self.addChild(n)
         //        }
-        
-        if pos.y < (self.size.height * 0.3) {
-            self.removeAllChildren()
-            drawButtons(toPoint: pos)
-            drawBars()
+        if pos.y < 0 {
+            redrawBars(atPoint: pos)
         }
     }
     
@@ -311,25 +357,6 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-    }
-}
-
-class TouchSpriteNode: SKSpriteNode {
-    override var isUserInteractionEnabled: Bool {
-        set {
-            // ignore
-        }
-        get {
-            return true
-        }
-    }
-         
-    // For macOS replace this method with `mouseDown(with:)`
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // User has touched this node
-        self.run(SKAction.fadeOut(withDuration: 0.5))
-        self.removeFromParent()
-
     }
 }
 
